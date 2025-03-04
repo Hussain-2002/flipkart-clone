@@ -1,21 +1,21 @@
-
-
-
-
-
-
-
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { Box, Button, Typography, Stack, Menu, MenuItem } from "@mui/material";
 import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
+import { DataContext } from "../../context/DataProvider";
+
+// Components
+import LoginDialog from "../login/LoginDialog";
 
 const CustomButtons = () => {
     const [anchorEl, setAnchorEl] = useState(null);
+    const [open, setOpen] = useState(false);
 
-    const handleOpen = (event) => {
+    const { account } = useContext(DataContext);
+
+    const handleHoverOpen = (event) => {
         setAnchorEl(event.currentTarget);
     };
 
@@ -23,18 +23,22 @@ const CustomButtons = () => {
         setAnchorEl(null);
     };
 
+    const openDialog = () => {
+        setOpen(true);
+        setAnchorEl(null); // Close dropdown when opening the dialog
+    };
 
     return (
         <Box sx={{ marginLeft: "40px" }}>
             <Stack direction="row" spacing={5} alignItems="center">
-                {/* Login Button with Hover Effect & Instant Dropdown */}
-                <Box 
-                onMouseEnter={handleOpen}>
+                
+                {/* Login Button - Change Text to Account Name When Logged In */}
+                <Box>
                     <Button
                         startIcon={<PersonOutlineIcon />}
                         endIcon={<KeyboardArrowDownIcon />}
                         sx={{
-                            color: "black", // Text remains black
+                            color: "black",
                             background: "transparent",
                             textTransform: "none",
                             px: 2,
@@ -43,24 +47,27 @@ const CustomButtons = () => {
                             transition: "all 0.3s ease-in-out",
                             border: "none",
                             "&:hover": {
-                                background: "#2874f0", // Flipkart blue background on hover
-                                transform: "scale(1.1)", // Slight zoom
+                                background: "#2874f0",
+                                transform: "scale(1.1)",
                             },
                         }}
+                        onMouseEnter={handleHoverOpen} // Open dropdown on hover
+                        onClick={openDialog} // Open Login Dialog on click
                     >
-                        Login
+                        {account ? account : "Login"}
                     </Button>
 
                     {/* Dropdown Menu */}
                     <Menu
-                    anchorEl={anchorEl}
-                    open={Boolean(anchorEl)}
-                    onClose={handleClose}
-                    MenuListProps={{
-                        onMouseLeave: handleClose, // Only closes when cursor leaves dropdown
-                    }}
-                >
-                        <MenuItem>My Profile</MenuItem>
+                        anchorEl={anchorEl}
+                        open={Boolean(anchorEl)}
+                        onClose={handleClose}
+                        MenuListProps={{
+                            onMouseLeave: handleClose,
+                        }}
+                    >
+                        {!account && <MenuItem onClick={openDialog}>Login</MenuItem>}
+                        {account && <MenuItem>My Profile</MenuItem>}
                         <MenuItem>Flipkart Plus Zone</MenuItem>
                         <MenuItem>Orders</MenuItem>
                         <MenuItem>Wishlist</MenuItem>
@@ -76,11 +83,11 @@ const CustomButtons = () => {
                 </Box>
 
                 {/* Seller Section */}
-                <Typography 
-                    sx={{ 
-                        cursor: "pointer", 
+                <Typography
+                    sx={{
+                        cursor: "pointer",
                         fontWeight: 500,
-                        "&:hover": { color: "blue" } 
+                        "&:hover": { color: "blue" },
                     }}
                 >
                     Become a Seller
@@ -89,6 +96,9 @@ const CustomButtons = () => {
                 {/* More Options */}
                 <MoreVertIcon sx={{ cursor: "pointer" }} />
             </Stack>
+
+            {/* Login Dialog */}
+            <LoginDialog open={open} setOpen={setOpen} />
         </Box>
     );
 };

@@ -1,18 +1,17 @@
 import './App.css';
 import Header from './components/header/Header';
 import Home from './components/home/Home';
-
+import DataProvider from './context/DataProvider';
 import { Box } from '@mui/material';
 
 function App() {
   return (
-    <div className="App">
+    <DataProvider>
       <Header />
-      <Box sx={{ marginTop: '64px', padding: '20px' }}>  
-        {/* Margin increased for more spacing & padding for a better layout */}
+      <Box sx={{ marginTop: '64px', padding: '20px' }}>
         <Home />
       </Box>
-    </div>
+    </DataProvider>
   );
 }
 
