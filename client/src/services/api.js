@@ -12,8 +12,10 @@ export const authenticateSignup = async (data) => {
 // ✅ Add this function to fix the error
 export const authenticateLogin = async (data) => {
     try {
-        return await axios.post(`${URL}/login`, data);
+        const response = await axios.post(`${URL}/login`, data);
+        return response;
     } catch (error) {
-        console.log('Error while calling login API', error);
+        console.log('Error while calling login API:', error);
+        return error.response;  // Return error response
     }
 };

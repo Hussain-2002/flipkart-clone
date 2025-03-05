@@ -1,7 +1,8 @@
 import { Dialog, Box, TextField, Typography, Button, styled } from "@mui/material";
 import { useState, useContext } from "react";
-import {authenticateSignup} from "../../services/api.js";
+import {authenticateSignup,authenticateLogin} from "../../services/api.js";
 import { DataContext } from "../../context/DataProvider.jsx";
+
 const Component = styled(Box)({
     height: '70vh',
     width: '90vh',
@@ -81,10 +82,18 @@ const signupInitialValues = {
     phone: ''   
 };
 
+const loginInitialValues = {
+    username: '',
+    password: ''
+}
+
+
+
 const LoginDialog = ({ open, setOpen }) => {
     const [account, toggleAccount] = useState(accountInitialValues.login);
     const [signup, setSignup] = useState(signupInitialValues);
-  const { setAccount } = useContext(DataContext);
+    const [login, setLogin ] = useState (loginInitialValues)
+    const { setAccount } = useContext(DataContext);
 
 
     const handleClose = () => {
@@ -106,6 +115,18 @@ const LoginDialog = ({ open, setOpen }) => {
         setAccount(signup.firstname);
     }    
     
+
+    const onValueChange = (e) =>{
+        setLogin({...login, [e.target.name]: e.target.value});
+    }
+
+    const loginUser = async() =>{
+        let response = await authenticateLogin(login);
+    }
+
+
+
+    
     return (
         <Dialog open={open} onClose={handleClose} PaperProps={{ sx: { maxWidth: 'unset' } }}>
             <Component>
@@ -118,17 +139,15 @@ const LoginDialog = ({ open, setOpen }) => {
                     </Image>
                     {account.view === 'login' ? (
                         <Wrapper>
-                            <TextField variant="standard" label="Enter Email/Mobile number" />
-                            <TextField variant="standard" label="Enter Password" />
+                            <TextField variant="standard" onChange={(e) => onValueChange(e)} name="username" label="Enter Email/Mobile number" />
+                            <TextField variant="standard" onChange={(e) => onValueChange(e)} name="password" label="Enter Password" />
                             <Text>
                                 By continuing, you agree to Flipkart's Terms of Use and Privacy Policy.
                             </Text>
-                            <LoginButton>Login</LoginButton>
+                            <LoginButton onClick={() => loginUser()}>Login</LoginButton>
                             <Typography style={{ textAlign: 'center' }}>OR</Typography>
                             <RequestOTP>Request OTP</RequestOTP>
-                            <CreateAccount onClick={toggleSignup}>
-                                New to Flipkart? Create an account
-                            </CreateAccount>
+                            <CreateAccount onClick={toggleSignup}>New to Flipkart? Create an accoun</CreateAccount>
                         </Wrapper>
                     ) : (
                         <Wrapper>
@@ -136,7 +155,7 @@ const LoginDialog = ({ open, setOpen }) => {
                             <TextField variant="standard" onChange={onInputChange} name="lastname" label="Enter Last Name" />
                             <TextField variant="standard" onChange={onInputChange} name="username" label="Enter User Name" />
                             <TextField variant="standard" onChange={onInputChange} name="email" label="Enter Email" />
-                            <TextField variant="standard" onChange={onInputChange} name="password" label="Enter Password" />
+                            <TextField variant="standard" onChange={onInputChange} name="password" label="Enter Password" type="password" />
                             <TextField variant="standard" onChange={onInputChange} name="phone" label="Enter Mobile number" />
                             <LoginButton onClick={signupUser}>Continue</LoginButton>
                         </Wrapper>
